@@ -16,7 +16,8 @@ class App extends Component {
   constructor(props){
     super(props)
     this.state = {
-      filtro:''
+      filtro:'',
+      textoFilter:""
     }
 
     this.handleSearch = this.handleSearch.bind(this);
@@ -41,6 +42,7 @@ class App extends Component {
           <h1>Lista de Veiculos</h1>
           <div className="barra">
             <div className="pesquisa">
+              <FilterMenu input={(text) => this.setState({textoFilter:text})} />
               <FilterMenu textInput={this.handlerInput(this.props.textInput)} />
               <Button variant="contained" color="primary" onClick={this.handleSearch}>
                 <SearchSharpIcon/>

@@ -1,4 +1,8 @@
 
+h1 {
+    padding: 20px ;
+}
+
 .barra {
     display: flex;
     justify-content: space-between;

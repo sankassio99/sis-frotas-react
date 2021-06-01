@@ -12,6 +12,9 @@ import MenuItem from '@material-ui/core/MenuItem';
 import "./estilo.css" ;
 import api from '../../services/api' ;
 
+import Alert from '@material-ui/lab/Alert';
+import Snackbar from '@material-ui/core/Snackbar';
+
 export default class FormDialog extends React.Component {
 
   constructor(props) {
@@ -22,7 +25,8 @@ export default class FormDialog extends React.Component {
       marca: '',
       estadoConservacao:'Bom' , 
       placa: '',
-      open: ''
+      open: '',
+      openAlert: '',
     };
 
     this.handleChange = this.handleChange.bind(this);
@@ -58,12 +62,23 @@ export default class FormDialog extends React.Component {
   
     const handleSave = () => {
       const response = api.post("veiculo", {modelo, marca, quilometragem, estadoConservacao, placa });
-      console.log(response);
-      window.location.reload();
+      // console.log(response);
+      this.setState({
+        openAlert:true
+      })
+
+      setTimeout(()=>{
+        window.location.reload();
+      },1000);
     }
 
     return (
       <div>
+        <Snackbar open={this.state.openAlert} autoHideDuration={6000} onClose={handleClose}>
+          <Alert onClose={handleClose} severity="success">
+            Novo Veiculo Adcionado com Sucesso!
+          </Alert>
+        </Snackbar>
         <Fab color="secondary" aria-label="add" onClick={handleClickOpen} >
           <AddIcon />
         </Fab>

@@ -1,3 +1,10 @@
 .tabela-personalzida {
     width: 80%;
 }
+
+
+.btn-edit {
+    cursor: pointer;
+    background-color: azure;
+    border: 1px 2px;
+}

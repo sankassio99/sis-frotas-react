@@ -1,9 +1,8 @@
 import Button from '@material-ui/core/Button';
 import SearchSharpIcon from '@material-ui/icons/SearchSharp';
-import AddBoxIcon from '@material-ui/icons/AddBox';
 
-import Table from './components/CollapsibleTable/CollapsibleTable.js';
-import Input from "./components/BasicTextFields/BasicTextFields.js";
+import Table from './components/CollapsibleTable/CollapsibleTable';
+import FilterMenu from "./components/FilterMenu/FilterMenu"
 
 import "./assets/app.css" ;
 import { Component } from 'react';
@@ -13,14 +12,28 @@ import { createMuiTheme } from '@material-ui/core/styles';
 
 
 class App extends Component {
+  
+  constructor(props){
+    super(props)
+    this.state = {
+      filtro:''
+    }
+
+    this.handleSearch = this.handleSearch.bind(this);
+  }
+
+  handleSearch(){
+    this.setState({
+      filtro:'/getByMarca/Chevrolet'
+    })
+    alert(this.state.filtro)
+  }
+
+  handlerInput(text){
+    console.log(text);
+  }
 
   render(){
-
-    const darkTheme = createMuiTheme({
-      palette: {
-        type: 'dark',
-      },
-    });
 
     return (
       <div className="App">
@@ -28,8 +41,8 @@ class App extends Component {
           <h1>Lista de Veiculos</h1>
           <div className="barra">
             <div className="pesquisa">
-              <Input/>
-              <Button variant="contained" color="primary">
+              <FilterMenu textInput={this.handlerInput(this.props.textInput)} />
+              <Button variant="contained" color="primary" onClick={this.handleSearch}>
                 <SearchSharpIcon/>
                 Buscar
               </Button>
@@ -38,11 +51,8 @@ class App extends Component {
           </div>
         </header>
         <div className="tabela">
-          <Table></Table>
+          <Table url={this.state.filtro}></Table>
         </div>
-        
-        
-
       </div>
     );
   }

@@ -12,6 +12,8 @@ import MenuItem from '@material-ui/core/MenuItem';
 import "./estilo.css" ;
 import api from '../../services/api' ;
 import EditSharpIcon from '@material-ui/icons/EditSharp';
+import Alert from '@material-ui/lab/Alert';
+import Snackbar from '@material-ui/core/Snackbar';
 
 export default class FormDialog extends React.Component {
 
@@ -26,7 +28,8 @@ export default class FormDialog extends React.Component {
       marca: this.props.dadosVeiculo.calories,
       estadoConservacao:this.props.dadosVeiculo.carbs , 
       placa: this.props.dadosVeiculo.protein,
-      open: ''
+      open: '',
+      openAlert: ''
     };
 
     this.handleChange = this.handleChange.bind(this);
@@ -61,7 +64,8 @@ export default class FormDialog extends React.Component {
   
     const handleClose = () => {
       this.setState({
-        open:false
+        open:false,
+        openAlert:true
       })
     };
   
@@ -73,13 +77,22 @@ export default class FormDialog extends React.Component {
         estadoConservacao: estadoConservacao , 
         placa: placa,
         });
-      console.log(veiculoUpdated);
-      window.location.reload();
+        handleClose()
+        setTimeout(()=>{
+            window.location.reload();
+        },1500);
     }
 
     return (
       <div>
-        <EditSharpIcon color="primary" onClick={handleClickOpen} />
+        <Snackbar open={this.state.openAlert} autoHideDuration={6000} >
+            <Alert severity="success" onClose={handleClose}>
+            Veiculo Editado com Sucesso!
+            </Alert>
+        </Snackbar>
+         <Button color="primary">
+          <EditSharpIcon color="primary" onClick={handleClickOpen} /> 
+         </Button>
         <Dialog open={this.state.open} onClose={handleClose} aria-labelledby="form-dialog-title">
           <DialogTitle id="form-dialog-title">Adicionar Novo Veiculo</DialogTitle>
           <DialogContent>

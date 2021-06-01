@@ -14,7 +14,7 @@ import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
-import DeleteForeverSharpIcon from '@material-ui/icons/DeleteForeverSharp';
+import ConfirmDialog from '../ConfirmDialog/ConfirmDialog'
 import SimpleModalEdit from '../SimpleModalEdit/SimpleModalEdit';
 
 import api from '../../services/api' ;
@@ -66,13 +66,6 @@ function Row(props) {
   const [open, setOpen] = React.useState(false);
   const classes = useRowStyles();
 
-  async function handlerDeletar(){
-    console.log("editando: "+row.id);
-    const veiculoDeleted = await api.delete(`veiculo/${row.id}`);
-    console.log(veiculoDeleted);
-    window.location.reload();
-  }
-
   return (
     <React.Fragment>
       <StyledTableRow className={classes.root}>
@@ -89,10 +82,10 @@ function Row(props) {
         <TableCell align="right">{row.carbs}</TableCell>
         <TableCell align="right">{row.protein}</TableCell>
         <TableCell align="right">
-          <SimpleModalEdit dadosVeiculo={row} color="primary" />
+          <SimpleModalEdit className="btn-edit" dadosVeiculo={row} color="primary" />
         </TableCell>
         <TableCell align="right">
-          <DeleteForeverSharpIcon color="secondary" onClick={handlerDeletar}/>
+          <ConfirmDialog dadosVeiculo={row} color="secundary"/>
         </TableCell>
       </StyledTableRow>
       <TableRow>
@@ -155,33 +148,30 @@ Row.propTypes = {
 export default class CollapsibleTable extends Component {
 
   state = {
-    veiculos:[]
+    veiculos:[],
+    rows:[]
   };
 
   async componentDidMount(){
-    const response = await api.get("veiculo")
+    // console.log(this.props.url);
+    const response = await api.get("veiculo"+this.props.url)
       .then((response) => {return (response.data)})
       .catch((err)=> {
         console.error("ops! ocorreu um erro" + err)});
-    console.log(response);
-    this.setState({ veiculos: response });
+
+    this.setState({ veiculos: response })
+    let dadosRow = [];
+    dadosRow.push(this.state.veiculos.map(veiculo => (
+        createData(veiculo.id, veiculo.modelo, veiculo.marca, veiculo.quilometragem, 
+            veiculo.estadoConservacao, veiculo.placa, 3.99)
+    )))
+
+    this.setState({
+      rows: dadosRow[0],
+    })
   }
   
   render(){
-
-    const {veiculos} = this.state;
-    const rows = [];
-    veiculos.map(veiculo => (
-    rows.push(createData
-      (
-        veiculo.id,
-        veiculo.modelo, 
-        veiculo.marca, 
-        veiculo.quilometragem, 
-        veiculo.estadoConservacao, 
-        veiculo.placa, 
-        3.99))))
-
     return (
       <TableContainer component={Paper}>
         <Table aria-label="collapsible table">
@@ -198,7 +188,7 @@ export default class CollapsibleTable extends Component {
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows.map((row) => (
+            {this.state.rows.map((row) => (
               <Row key={row.modelo} row={row} />
             ))}
           </TableBody>

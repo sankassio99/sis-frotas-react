@@ -3,12 +3,14 @@ import Button from '@material-ui/core/Button';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import FilterListIcon from '@material-ui/icons/FilterList';
-import Input from "../BasicTextFields/BasicTextFields";
+import TextField from '@material-ui/core/TextField';
 import "./estilo.css";
 
-export default function SimpleMenu() {
+export default function SimpleMenu(props) {
   const [anchorEl, setAnchorEl] = React.useState(null);
-  const [textInput, setTextInput] = React.useState('Veiculo');
+  const [textLabel, setTextLabel] = React.useState('Veiculo');
+  const [textInput, setTextInput] = React.useState('');
+  props.callbackParent(textInput, textLabel);
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -19,15 +21,18 @@ export default function SimpleMenu() {
   };
 
   function handleGetValue(text){
-      // console.log(text);
-      setTextInput(text);
+      setTextLabel(text);
       setAnchorEl(null);
+  }
+
+  function handleInput(e) {
+    setTextInput(e.target.value);
   }
 
   return (
     <div>
         <div className="linha">
-            <Input text={textInput}/>
+            <TextField type="text" onChange={handleInput} label={textLabel}/>
             <Button aria-controls="simple-menu" aria-haspopup="true" onClick={handleClick}>
                 <FilterListIcon />
             </Button>

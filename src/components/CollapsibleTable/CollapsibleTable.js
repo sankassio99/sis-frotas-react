@@ -153,7 +153,7 @@ export default class CollapsibleTable extends Component {
   };
 
   async componentDidMount(){
-    // console.log(this.props.url);
+    console.log(this.props.url);
     const response = await api.get("veiculo"+this.props.url)
       .then((response) => {return (response.data)})
       .catch((err)=> {

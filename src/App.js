@@ -15,22 +15,19 @@ class App extends Component {
   
   constructor(props){
     super(props)
-    this.state = {
-      filtro:''
-    }
-
+    this.typeFilter = '' ;
+    this.textFilter ='' ;
     this.handleSearch = this.handleSearch.bind(this);
+    this.handlerInput = this.handlerInput.bind(this);
   }
 
   handleSearch(){
-    this.setState({
-      filtro:'/getByMarca/Chevrolet'
-    })
-    alert(this.state.filtro)
+    alert(this.textFilter + " em :" + this.typeFilter);
   }
 
-  handlerInput(text){
-    console.log(text);
+  handlerInput(textInput, textLabel){
+    this.textFilter = textInput ;
+    this.typeFilter = textLabel ;
   }
 
   render(){
@@ -41,7 +38,8 @@ class App extends Component {
           <h1>Lista de Veiculos</h1>
           <div className="barra">
             <div className="pesquisa">
-              <FilterMenu textInput={this.handlerInput(this.props.textInput)} />
+              {/* <FilterMenu textInput={(text) => this.setState({textFilter:text})} /> */}
+              <FilterMenu callbackParent={(textInput, textLabel) => this.handlerInput(textInput, textLabel)} />
               <Button variant="contained" color="primary" onClick={this.handleSearch}>
                 <SearchSharpIcon/>
                 Buscar
@@ -51,7 +49,7 @@ class App extends Component {
           </div>
         </header>
         <div className="tabela">
-          <Table url={this.state.filtro}></Table>
+          <Table url={this.typeFilter+"/"+this.textFilter}></Table>
         </div>
       </div>
     );

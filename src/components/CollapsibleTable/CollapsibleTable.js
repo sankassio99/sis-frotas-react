@@ -17,7 +17,12 @@ import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
 import ConfirmDialog from '../ConfirmDialog/ConfirmDialog'
 import SimpleModalEdit from '../SimpleModalEdit/SimpleModalEdit';
 
+import FilterMenu from "../FilterMenu/FilterMenu";
 import api from '../../services/api' ;
+import Button from '@material-ui/core/Button';
+import SearchSharpIcon from '@material-ui/icons/SearchSharp';
+import SimpleModal from '../SimpleModal/SimpleModal.js';
+import './estilo.css' ;
 
 const useRowStyles = makeStyles({
   root: {
@@ -147,33 +152,79 @@ Row.propTypes = {
 
 export default class CollapsibleTable extends Component {
 
-  state = {
-    veiculos:[],
-    rows:[]
-  };
+  constructor(props){
+    super(props);
+    this.veiculos = '';
+    this.typeFilter = '' ;
+    this.textFilter ='' ;
+
+    this.state = {
+      rows : []
+    }
+
+    this.handleSearch = this.handleSearch.bind(this);
+    this.handlerInput = this.handlerInput.bind(this);
+  }
+
+  handlerInput = (textInput, textLabel) => {
+    this.textFilter = textInput ;
+    this.typeFilter = textLabel ;
+  }
+
+  async handleSearch() {
+    let url = (this.textFilter == '') ? "veiculo/" : "veiculo/"+this.typeFilter+"/"+this.textFilter ;
+    const response = await api.get(url)
+                    .then((response) => {return (response.data)})
+                    .catch((err)=> {
+                    console.error("ops! ocorreu um erro" + err)});
+    this.veiculos = response ;
+    let dadosRow = [];
+    dadosRow.push(this.veiculos.map(veiculo => (
+        createData(veiculo.id, veiculo.modelo, veiculo.marca, veiculo.quilometragem, 
+            veiculo.estadoConservacao, veiculo.placa, 3.99)
+    )))
+    console.log(this.props.rows);
+
+    this.setState({
+      rows: dadosRow[0]
+    })
+    
+  }
 
   async componentDidMount(){
-    console.log(this.props.url);
-    const response = await api.get("veiculo"+this.props.url)
+    const response = await api.get("veiculo")
       .then((response) => {return (response.data)})
       .catch((err)=> {
         console.error("ops! ocorreu um erro" + err)});
 
-    this.setState({ veiculos: response })
+    this.veiculos = response ;
     let dadosRow = [];
-    dadosRow.push(this.state.veiculos.map(veiculo => (
+    dadosRow.push(this.veiculos.map(veiculo => (
         createData(veiculo.id, veiculo.modelo, veiculo.marca, veiculo.quilometragem, 
             veiculo.estadoConservacao, veiculo.placa, 3.99)
     )))
 
     this.setState({
-      rows: dadosRow[0],
+      rows: dadosRow[0]
     })
+
   }
+
   
   render(){
     return (
       <TableContainer component={Paper}>
+        <div className="barra">
+          <div className="pesquisa">
+            {/* <FilterMenu textInput={(text) => this.setState({textFilter:text})} /> */}
+            <FilterMenu callbackParent={(textInput, textLabel) => this.handlerInput(textInput, textLabel)} />
+            <Button variant="contained" color="primary" onClick={this.handleSearch}>
+              <SearchSharpIcon/>
+              Buscar
+            </Button>
+          </div>
+          <SimpleModal />
+        </div>
         <Table aria-label="collapsible table">
           <TableHead>
             <TableRow>

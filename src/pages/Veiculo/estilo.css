@@ -1,0 +1,22 @@
+
+h1 {
+    padding: 20px ;
+}
+
+.barra {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 20px ;
+}
+
+.pesquisa {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.tabela {
+    width: 98%;
+    margin: 0 auto ;
+}

@@ -44,10 +44,10 @@ export default function SimpleMenu(props) {
         open={Boolean(anchorEl)}
         onClose={handleClose}
       >
-        <MenuItem onClick={() => handleGetValue("Estado")} >Estado de Conservacao</MenuItem>
-        <MenuItem onClick={() => handleGetValue("Marca")}>Marca</MenuItem>
-        <MenuItem onClick={() => handleGetValue("Quilometragem")}>Quilometragem</MenuItem>
-        <MenuItem onClick={() => handleGetValue("Modelo")}>Modelo</MenuItem>
+        <MenuItem onClick={() => handleGetValue("estado")} >Estado de Conservacao</MenuItem>
+        <MenuItem onClick={() => handleGetValue("marca")}>Marca</MenuItem>
+        <MenuItem onClick={() => handleGetValue("intervaloQuilometragem")}>Quilometragem</MenuItem>
+        <MenuItem onClick={() => handleGetValue("modelo")}>Modelo</MenuItem>
       </Menu>
     </div>
   );

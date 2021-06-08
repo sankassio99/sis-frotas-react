@@ -3,7 +3,7 @@ import {BrowserRouter, Switch, Route } from 'react-router-dom';
 
 import Main from './pages/Main/index';
 import Veiculo from './pages/Veiculo/index';
-import OrdemTrafego from './pages/OrdemTrafego';
+import OrdemTrafego from './pages/OrdemTrafego/index';
 
 
 function Routes(){

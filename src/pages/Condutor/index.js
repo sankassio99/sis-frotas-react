@@ -3,12 +3,13 @@ import { Component } from 'react';
 import Table from './components/CollapsibleTable/CollapsibleTable' ;
 import './estilo.css' ;
 import Nav from '../../components/Navegacao/index' ;
-class Veiculo extends Component {
+
+class OrdemTrafego extends Component {
 
     render(){
         return (
         <div className="App">
-            <Nav titulo={"Lista de Veiculos"}></Nav>
+            <Nav titulo={"Lista de Condutores"}></Nav>
             <header className="App-header">
             </header>
             <div className="tabela">
@@ -19,4 +20,4 @@ class Veiculo extends Component {
     }
 }
 
-export default Veiculo ;
+export default OrdemTrafego ;

@@ -20,61 +20,23 @@ export default class FormDialog extends React.Component {
   constructor(props) {
     super(props);
 
-    console.log("row: "+this.props.dadosOrdem.id);
+    console.log("row: "+this.props.dadosCondutor.id);
     
     this.state = {
-      id: this.props.dadosOrdem.id,
-      origem: this.props.dadosOrdem.origem,
-      destino: this.props.dadosOrdem.destino,
-      data:this.props.dadosOrdem.data , 
-      hora: this.props.dadosOrdem.hora,
-      distancia: this.props.dadosOrdem.distancia,
-      veiculo_id: this.props.dadosOrdem.veiculo_id,
-      condutor_id: this.props.dadosOrdem.condutor_id,
+      id: this.props.dadosCondutor.id,
+      nome: this.props.dadosCondutor.nome,
+      numeroCnh: this.props.dadosCondutor.numeroCnh,
+      cpf:this.props.dadosCondutor.cpf , 
+      rg: this.props.dadosCondutor.rg,
+      dataNascimento: this.props.dadosCondutor.dataNacimento,
+      categoriaCnh: this.props.dadosCondutor.categoriaCnh,
       open: '',
       openAlert: '',
-      veiculos : [],
-      condutores : []
     };
 
     this.handleChange = this.handleChange.bind(this);
   }
 
-  async componentDidMount() {
-    const response = await api.get("veiculo")
-      .then((response) => {return (response.data)})
-      .catch((err)=> {
-      console.error("ops! ocorreu um erro" + err)});
-
-    const responseCondutor = await api.get("condutor")
-      .then((response) => {return (response.data)})
-      .catch((err)=> {
-      console.error("ops! ocorreu um erro" + err)});
-
-    let veiculos = response ;
-    let dadosVeiculos = [] ;
-    let dadosCondutores = [] ;
-
-    dadosVeiculos.push(veiculos.map((veiculo)=>{
-      let carro = {id: veiculo.id, modelo: veiculo.modelo};
-      return carro ;
-    }))
-
-    dadosCondutores.push(responseCondutor.map((condutor)=>{
-      let pessoa = {id: condutor.id, nome: condutor.nome};
-      return pessoa ;
-    }))
-
-    console.log(dadosCondutores);
-
-    this.setState({
-      veiculos : dadosVeiculos[0],
-      condutores : dadosCondutores[0],
-    })
-
-  };
-
- 
   handleChange(event) {
     const target = event.target;
     const value = target.type === 'checkbox' ? target.checked : target.value;
@@ -87,8 +49,7 @@ export default class FormDialog extends React.Component {
 
   render(){
 
-    const {id, origem, destino, data, hora, distancia, veiculo_id, condutor_id} = this.state ;
-    const quilometragem = 0;
+    const {id, nome, numeroCnh, cpf, rg, dataNascimento, categoriaCnh} = this.state ;
 
     const handleClickOpen = () => {
       this.setState({
@@ -119,14 +80,13 @@ export default class FormDialog extends React.Component {
 
   
     async function handleUpdate() {
-      await api.put(`ordem/${id}`, {
-        origem: origem,
-        destino: destino,
-        data: data,
-        hora: hora,
-        distancia: distancia , 
-        veiculo_id: veiculo_id,
-        condutor_id: condutor_id
+      await api.put(`condutor/${id}`, {
+        nome: nome,
+        numero: numeroCnh,
+        cpf:cpf , 
+        rg: rg,
+        dataNacimento: dataNascimento,
+        categoria: categoriaCnh,
         });
         handleClose();
         handleOpenAlert();
@@ -139,62 +99,64 @@ export default class FormDialog extends React.Component {
       <div>
         <Snackbar open={this.state.openAlert} autoHideDuration={6000} onClose={handleClose}>
           <Alert onClose={handleClose} severity="success">
-            Nova Ordem Adicionada com Sucesso!
+            Novo Condutor Adicionada com Sucesso!
           </Alert>
         </Snackbar>
          <Button color="primary">
           <EditSharpIcon color="primary" onClick={handleClickOpen} /> 
          </Button>
         <Dialog open={this.state.open} onClose={handleClose} aria-labelledby="form-dialog-title">
-          <DialogTitle id="form-dialog-title">Adicionar Nova Ordem</DialogTitle>
+          <DialogTitle id="form-dialog-title">Adicionar Novo Condutor</DialogTitle>
           <DialogContent>
-            <TextField  onChange={this.handleChange}
+            <TextField   onChange={this.handleChange}
               autoFocus
               margin="dense"
-              name="origem"
-              label="Origem"
-              value={this.state.origem}
+              name="nome"
+              label="Nome"
+              value={this.state.nome}
               type="text"
               fullWidth
             />
-            <TextField onChange={this.handleChange}
+            <TextField  onChange={this.handleChange}
               margin="dense"
-              name="destino"
-              label="Destino"
+              name="numeroCnh"
+              label="CNH"
               type="text"
-              value={this.state.destino}
+              value={this.state.numeroCnh}
               fullWidth
             />
             <div className="linha">
-              <TextField id="select" label="Veiculo" name="veiculo_id" 
-              select value={this.state.veiculo_id} onChange={this.handleChange}>
-                {this.state.veiculos.map((veiculo) => (
-                    <MenuItem value={veiculo.id}>{veiculo.modelo}</MenuItem>
-                ))}
-              </TextField>
-
-              <TextField id="select" label="Condutor" name="condutor_id" 
-              value={this.state.condutor_id} select onChange={this.handleChange}>
-                {this.state.condutores.map((condutor) => (
-                    <MenuItem value={condutor.id}>{condutor.nome}</MenuItem>
-                ))}
-              </TextField>
+              <TextField  id="select" label="Veiculo" name="categoriaCnh" 
+              select value={this.state.categoriaCnh} onChange={this.handleChange}>
+                  <MenuItem value="A">A</MenuItem>
+                  <MenuItem value="B">B</MenuItem>
+                  <MenuItem value="C">C</MenuItem>
+                  <MenuItem value="D">D</MenuItem>
+                  <MenuItem value="E">E</MenuItem>
+              </TextField >
+              <TextField  className="text-field" onChange={this.handleChange}
+              margin="dense"
+              name="cpf"
+              label="CPF"
+              type="text"
+              value={this.state.cpf}
+            />
             </div>
             <div className="linha">
-            
-              <TextField className="text-field" onChange={this.handleChange}
+
+            <TextField  className="text-field" onChange={this.handleChange}
               margin="dense"
-              name="data"
-              label="Data"
+              name="rg"
+              label="RG"
               type="text"
-              value={this.state.data}
+              value={this.state.rg}
             />
-            <TextField className="text-field" onChange={this.handleChange}
+            <TextField  className="text-field" onChange={this.handleChange}
               margin="dense"
-              name="distancia"
-              label="Distancia"
+              name="dataNacimento"
+              label="Data de Nascimento"
               type="text"
-              value={this.state.distancia}
+              value={this.state.dataNascimento}
             />
             </div>
           </DialogContent>

@@ -2,6 +2,11 @@
     width: 80%;
 }
 
+.btn-group {
+    display:flex;
+    align-items: center ;
+    width: 40px;
+}
 
 .btn-edit {
     cursor: pointer;

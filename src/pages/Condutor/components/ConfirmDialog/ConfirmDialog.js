@@ -6,7 +6,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Slide from '@material-ui/core/Slide';
-import api from '../../services/api' ;
+import api from '../../../../services/api' ;
 import DeleteIcon from '@material-ui/icons/Delete';
 import Alert from '@material-ui/lab/Alert';
 import Snackbar from '@material-ui/core/Snackbar';
@@ -28,8 +28,8 @@ export default function ConfirmDialog(props) {
   };
 
   async function handlerDeletar(){
-    console.log("editando: "+props.dadosVeiculo.id);
-    const veiculoDeleted = await api.delete(`veiculo/${props.dadosVeiculo.id}`);
+    console.log("deletando: "+props.dadosCondutor.id);
+    await api.delete(`condutor/${props.dadosCondutor.id}`);
     setOpenAlert(true);
     setTimeout(()=>{
         window.location.reload();
@@ -40,7 +40,7 @@ export default function ConfirmDialog(props) {
     <div>
         <Snackbar open={openAlert} autoHideDuration={6000} onClose={handleClose}>
             <Alert severity="success">
-            Veiculo Deletado com Sucesso!
+            Ordem Deletada com Sucesso!
             </Alert>
         </Snackbar>
       <Button color="primary" onClick={handleClickOpen}>

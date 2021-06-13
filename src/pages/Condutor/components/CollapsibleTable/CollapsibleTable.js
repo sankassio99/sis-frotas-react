@@ -18,11 +18,13 @@ import ConfirmDialog from '../ConfirmDialog/ConfirmDialog'
 import SimpleModalEdit from '../SimpleModalEdit/SimpleModalEdit';
 
 import FilterMenu from "../FilterMenu/FilterMenu";
-import api from '../../services/api' ;
+import api from '../../../../services/api' ;
 import Button from '@material-ui/core/Button';
 import SearchSharpIcon from '@material-ui/icons/SearchSharp';
 import SimpleModal from '../SimpleModal/SimpleModal.js';
 import './estilo.css' ;
+
+import Skeleton from '@material-ui/lab/Skeleton';
 
 const useRowStyles = makeStyles({
   root: {
@@ -34,7 +36,7 @@ const useRowStyles = makeStyles({
 
 const StyledTableCell = withStyles((theme) => ({
   head: {
-    backgroundColor: "#3f51b5",
+    backgroundColor: "#f50057",
     color: theme.palette.common.white,
   },
   body: {
@@ -50,15 +52,15 @@ const StyledTableRow = withStyles((theme) => ({
   },
 }))(TableRow);
 
-function createData(id, name, calories, fat, carbs, protein, price) {
+function createData(id, nome, numeroCnh, categoriaCnh, dataNacimento, cpf, rg) {
   return {
-    id,
-    name,
-    calories,
-    fat,
-    carbs,
-    protein,
-    price,
+    id: id,
+    nome: nome,
+    numeroCnh: numeroCnh,
+    categoriaCnh: categoriaCnh,
+    dataNacimento: dataNacimento,
+    cpf: cpf,
+    rg: rg, 
     history: [
       { date: '2020-01-05', customerId: '11091700', amount: 3 },
       { date: '2020-01-02', customerId: 'Anonymous', amount: 1 },
@@ -74,60 +76,58 @@ function Row(props) {
   return (
     <React.Fragment>
       <StyledTableRow className={classes.root}>
-        <TableCell>
+        <TableCell component="th" scope="row">
           <IconButton aria-label="expand row" size="small" onClick={() => setOpen(!open)}>
             {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
           </IconButton>
         </TableCell>
-        <TableCell component="th" scope="row">
-          {row.name}
-        </TableCell>
-        <TableCell align="right">{row.calories}</TableCell>
-        <TableCell align="right">{row.fat}</TableCell>
-        <TableCell align="right">{row.carbs}</TableCell>
-        <TableCell align="right">{row.protein}</TableCell>
-        <TableCell align="right">
-          <SimpleModalEdit className="btn-edit" dadosVeiculo={row} color="primary" />
-        </TableCell>
-        <TableCell align="right">
-          <ConfirmDialog dadosVeiculo={row} color="secundary"/>
+        <TableCell>{row.nome}</TableCell>
+        <TableCell align="right">{row.numeroCnh}</TableCell>
+        <TableCell align="right">{row.categoriaCnh}</TableCell>
+        <TableCell align="right">{row.dataNacimento}</TableCell>
+        <TableCell >
+          <div className="btn-group">
+            <SimpleModalEdit className="btn-edit" dadosCondutor={row} color="primary" />
+            <ConfirmDialog dadosCondutor={row} color="secundary"/>
+          </div>
         </TableCell>
       </StyledTableRow>
-      <TableRow>
-        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
-          <Collapse in={open} timeout="auto" unmountOnExit>
-            <Box margin={1}>
-              <Typography variant="h6" gutterBottom component="div">
-                Ordens de Trafego
-              </Typography>
-              <Table size="small" aria-label="purchases">
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Data</TableCell>
-                    <TableCell>Origem</TableCell>
-                    <TableCell align="right">Destino</TableCell>
-                    <TableCell align="right">Condutor</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {row.history.map((historyRow) => (
-                    <TableRow key={historyRow.date}>
-                      <TableCell component="th" scope="row">
-                        {historyRow.date}
-                      </TableCell>
-                      <TableCell>{historyRow.customerId}</TableCell>
-                      <TableCell align="right">{historyRow.amount}</TableCell>
-                      <TableCell align="right">
-                        {Math.round(historyRow.amount * row.price * 100) / 100}
-                      </TableCell>
+        <TableRow>
+          <TableCell  style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
+            <Collapse in={open} timeout="auto" unmountOnExit>
+              <Box margin={1}>
+                <Typography variant="h6" gutterBottom component="div">
+                  Ordens de Trafego
+                </Typography>
+                <Table size="small" aria-label="purchases">
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>Data</TableCell>
+                      <TableCell>Origem</TableCell>
+                      <TableCell align="right">Destino</TableCell>
+                      <TableCell align="right">Condutor</TableCell>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </Box>
-          </Collapse>
-        </TableCell>
-      </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {row.history.map((historyRow) => (
+                      <TableRow key={historyRow.date}>
+                        <TableCell component="th" scope="row">
+                          {historyRow.date}
+                        </TableCell>
+                        <TableCell>{historyRow.customerId}</TableCell>
+                        <TableCell align="right">{historyRow.amount}</TableCell>
+                        <TableCell align="right">
+                          {Math.round(historyRow.amount * row.price * 100) / 100}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </Box>
+            </Collapse>
+          </TableCell>
+        </TableRow>
+      
     </React.Fragment>
   );
 }
@@ -154,12 +154,13 @@ export default class CollapsibleTable extends Component {
 
   constructor(props){
     super(props);
-    this.veiculos = '';
+    this.condutores = '';
     this.typeFilter = '' ;
     this.textFilter ='' ;
 
     this.state = {
-      rows : []
+      rows : [],
+      loading : true
     }
 
     this.handleSearch = this.handleSearch.bind(this);
@@ -172,40 +173,44 @@ export default class CollapsibleTable extends Component {
   }
 
   async handleSearch() {
-    let url = (this.textFilter == '') ? "veiculo/" : "veiculo/"+this.typeFilter+"/"+this.textFilter ;
+    let url = (this.textFilter == '') ? "condutor/" : "condutor/"+this.typeFilter+"/"+this.textFilter ;
     const response = await api.get(url)
                     .then((response) => {return (response.data)})
                     .catch((err)=> {
                     console.error("ops! ocorreu um erro" + err)});
-    this.veiculos = response ;
+    this.condutores = response ;
     let dadosRow = [];
-    dadosRow.push(this.veiculos.map(veiculo => (
-        createData(veiculo.id, veiculo.modelo, veiculo.marca, veiculo.quilometragem, 
-            veiculo.estadoConservacao, veiculo.placa, 3.99)
+    dadosRow.push(this.condutores
+.map(condutores => (
+        createData(condutores.id, condutores.origem, condutores.destino, condutores.data, 
+            condutores.distancia, condutores.veiculo, condutores.condutor)
     )))
     console.log(this.props.rows);
 
     this.setState({
-      rows: dadosRow[0]
+      rows: dadosRow[0],
+      loading: false
     })
     
   }
 
   async componentDidMount(){
-    const response = await api.get("veiculo")
+    const response = await api.get("condutor")
       .then((response) => {return (response.data)})
       .catch((err)=> {
         console.error("ops! ocorreu um erro" + err)});
 
-    this.veiculos = response ;
+    this.condutores = response ;
     let dadosRow = [];
-    dadosRow.push(this.veiculos.map(veiculo => (
-        createData(veiculo.id, veiculo.modelo, veiculo.marca, veiculo.quilometragem, 
-            veiculo.estadoConservacao, veiculo.placa, 3.99)
-    )))
+    dadosRow.push(this.condutores
+    .map(condutores => (
+            createData(condutores.id, condutores.nome, condutores.cnh.numero, condutores.cnh.categoria, 
+                condutores.cnh.dataNacimento, condutores.cnh.cpf, condutores.cnh.rg)
+        )))
 
     this.setState({
-      rows: dadosRow[0]
+      rows: dadosRow[0],
+      loading: false
     })
 
   }
@@ -228,20 +233,27 @@ export default class CollapsibleTable extends Component {
         <Table aria-label="collapsible table">
           <TableHead>
             <TableRow>
-              <StyledTableCell />
-              <StyledTableCell>Modelo</StyledTableCell>
-              <StyledTableCell align="right">Marca</StyledTableCell>
-              <StyledTableCell align="right">Quilometragem</StyledTableCell>
-              <StyledTableCell align="right">Estado</StyledTableCell>
-              <StyledTableCell align="right">Placa</StyledTableCell>
-              <StyledTableCell align="right"></StyledTableCell>
+              <StyledTableCell/>
+              <StyledTableCell>Nome</StyledTableCell>
+              <StyledTableCell align="right">CNH</StyledTableCell>
+              <StyledTableCell align="right">Categoria</StyledTableCell>
+              <StyledTableCell align="right">Data Nascimento</StyledTableCell>
               <StyledTableCell align="right"></StyledTableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {this.state.rows.map((row) => (
-              <Row key={row.modelo} row={row} />
-            ))}
+            { this.state.loading ? (
+              <div className="loading">
+                <Skeleton animation="wave" width={"180vh"} height={60}/>
+                <Skeleton animation="wave" width={"180vh"} height={60} />
+                <Skeleton animation="wave" width={"180vh"} height={60}/>
+              </div>
+            ) : (
+              this.state.rows.map((row) => (
+                <Row key={row.modelo} row={row} />
+              ))
+            )}
+            
           </TableBody>
         </Table>
       </TableContainer>

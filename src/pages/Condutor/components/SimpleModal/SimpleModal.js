@@ -21,53 +21,16 @@ export default class FormDialog extends React.Component {
     super(props);
     
     this.state = {
-      origem: '',
-      destino: '',
-      data:'2021-06-03' , 
-      hora: '10:00:00',
-      distancia: '',
-      veiculo_id: '',
-      condutor_id: '',
-      veiculos: [],
-      condutores: []
+      nome: '',
+      numero: '',
+      cpf:'' , 
+      rg: '',
+      dataNacimento: '',
+      categoria: 'A',
     };
 
     this.handleChange = this.handleChange.bind(this);
   }
-
-  async componentDidMount() {
-    const response = await api.get("veiculo")
-      .then((response) => {return (response.data)})
-      .catch((err)=> {
-      console.error("ops! ocorreu um erro" + err)});
-
-    const responseCondutor = await api.get("condutor")
-      .then((response) => {return (response.data)})
-      .catch((err)=> {
-      console.error("ops! ocorreu um erro" + err)});
-
-    let veiculos = response ;
-    let dadosVeiculos = [] ;
-    let dadosCondutores = [] ;
-
-    dadosVeiculos.push(veiculos.map((veiculo)=>{
-      let carro = {id: veiculo.id, modelo: veiculo.modelo};
-      return carro ;
-    }))
-
-    dadosCondutores.push(responseCondutor.map((condutor)=>{
-      let pessoa = {id: condutor.id, nome: condutor.nome};
-      return pessoa ;
-    }))
-
-    console.log(dadosCondutores);
-
-    this.setState({
-      veiculos : dadosVeiculos[0],
-      condutores : dadosCondutores[0] 
-    })
-
-  };
   
   handleChange(event) {
     const target = event.target;
@@ -81,8 +44,7 @@ export default class FormDialog extends React.Component {
 
   render(){
 
-    const {origem, destino, data, hora, distancia, veiculo_id, condutor_id} = this.state ;
-    const quilometragem = 0;
+    const {nome, numero, cpf, rg, dataNacimento, categoria} = this.state ;
 
     const handleClickOpen = () => {
       this.setState({
@@ -98,7 +60,7 @@ export default class FormDialog extends React.Component {
   
     const handleSave = () => {
       const response = api.post(
-        "ordem", {origem, destino, quilometragem, data, hora, distancia, veiculo_id, condutor_id });
+        "condutor", {nome, numero, cpf, rg, dataNacimento, categoria});
       this.setState({
         openAlert:true
       })
@@ -121,50 +83,55 @@ export default class FormDialog extends React.Component {
         <Dialog open={this.state.open} onClose={handleClose} aria-labelledby="form-dialog-title">
           <DialogTitle className="dialog-actions" id="form-dialog-title">Adicionar Nova Ordem</DialogTitle>
           <DialogContent>
-            <TextField  onChange={this.handleChange}
+            <TextField   onChange={this.handleChange}
               autoFocus
               margin="dense"
-              name="origem"
-              label="Origem"
+              name="nome"
+              label="Nome"
+              // value={this.state.nome}
               type="text"
               fullWidth
             />
-            <TextField onChange={this.handleChange}
+            <TextField  onChange={this.handleChange}
               margin="dense"
-              name="destino"
-              label="Destino"
+              name="numero"
+              label="CNH"
               type="text"
+              // value={this.state.numeroCnh}
               fullWidth
             />
             <div className="linha">
-              <TextField className="text-select" id="select" label="Veiculo"	 name="veiculo_id" 
-              value={this.state.veiculo_id} select onChange={this.handleChange}>
-                {this.state.veiculos.map((veiculo) => (
-                    <MenuItem value={veiculo.id}>{veiculo.modelo}</MenuItem>
-                ))}
-              </TextField>
-
-              <TextField className="text-select" id="select" label="Condutor" name="condutor_id" 
-              value={this.state.condutor_id} select onChange={this.handleChange}>
-                {this.state.condutores.map((condutor) => (
-                    <MenuItem value={condutor.id}>{condutor.nome}</MenuItem>
-                ))}
-              </TextField>
+              <TextField  id="select" label="Categoria" name="categoria" 
+              select value={this.state.categoria} onChange={this.handleChange}>
+                  <MenuItem value="A">A</MenuItem>
+                  <MenuItem value="B">B</MenuItem>
+                  <MenuItem value="C">C</MenuItem>
+                  <MenuItem value="D">D</MenuItem>
+                  <MenuItem value="E">E</MenuItem>
+              </TextField >
+              <TextField  className="text-field" onChange={this.handleChange}
+              margin="dense"
+              name="cpf"
+              label="CPF"
+              type="text"
+              // value={this.state.cpf}
+            />
             </div>
             <div className="linha">
-            
-              <TextField className="text-field" onChange={this.handleChange}
+
+            <TextField  className="text-field" onChange={this.handleChange}
               margin="dense"
-              name="data"
-              label="Data"
+              name="rg"
+              label="RG"
               type="text"
-              value={this.state.data}
+              // value={this.state.rg}
             />
-            <TextField className="text-field" onChange={this.handleChange}
+            <TextField  className="text-field" onChange={this.handleChange}
               margin="dense"
-              name="distancia"
-              label="Distancia"
+              name="dataNacimento"
+              label="Data de Nascimento"
               type="text"
+              // value={this.state.dataNascimento}
             />
             </div>
           </DialogContent>

@@ -4,6 +4,7 @@ import {BrowserRouter, Switch, Route } from 'react-router-dom';
 import Main from './pages/Main/index';
 import Veiculo from './pages/Veiculo/index';
 import OrdemTrafego from './pages/OrdemTrafego/index';
+import Condutor from './pages/Condutor/index';
 
 
 function Routes(){
@@ -18,6 +19,9 @@ function Routes(){
             </Switch>
             <Switch>
                 <Route path="/ordem-trafego" component={OrdemTrafego} />
+            </Switch>
+            <Switch>
+                <Route path="/condutor" component={Condutor} />
             </Switch>
         </BrowserRouter>
     )

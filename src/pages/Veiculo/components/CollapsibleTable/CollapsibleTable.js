@@ -24,8 +24,6 @@ import SearchSharpIcon from '@material-ui/icons/SearchSharp';
 import SimpleModal from '../SimpleModal/SimpleModal.js';
 import './estilo.css' ;
 
-import Skeleton from '@material-ui/lab/Skeleton';
-
 const useRowStyles = makeStyles({
   root: {
     '& > *': {
@@ -52,17 +50,15 @@ const StyledTableRow = withStyles((theme) => ({
   },
 }))(TableRow);
 
-function createData(id, origem, destino, data, distancia, veiculo, condutor, veiculo_id, condutor_id) {
+function createData(id, name, calories, fat, carbs, protein, price) {
   return {
-    id: id,
-    origem: origem,
-    destino: destino,
-    data: data,
-    distancia: distancia,
-    veiculo: veiculo,
-    condutor: condutor,
-    veiculo_id: veiculo_id,
-    condutor_id: condutor_id,
+    id,
+    name,
+    calories,
+    fat,
+    carbs,
+    protein,
+    price,
     history: [
       { date: '2020-01-05', customerId: '11091700', amount: 3 },
       { date: '2020-01-02', customerId: 'Anonymous', amount: 1 },
@@ -78,21 +74,60 @@ function Row(props) {
   return (
     <React.Fragment>
       <StyledTableRow className={classes.root}>
-        <TableCell component="th" scope="row">
-          {row.origem}
+        <TableCell>
+          <IconButton aria-label="expand row" size="small" onClick={() => setOpen(!open)}>
+            {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+          </IconButton>
         </TableCell>
-        <TableCell align="right">{row.destino}</TableCell>
-        <TableCell align="right">{row.data}</TableCell>
-        <TableCell align="right">{row.distancia} Km</TableCell>
-        <TableCell align="right">{row.veiculo}</TableCell>
-        <TableCell align="right">{row.condutor}</TableCell>
-        <TableCell >
+        <TableCell component="th" scope="row">
+          {row.name}
+        </TableCell>
+        <TableCell align="right">{row.calories}</TableCell>
+        <TableCell align="right">{row.fat}</TableCell>
+        <TableCell align="right">{row.carbs}</TableCell>
+        <TableCell align="right">{row.protein}</TableCell>
+        <TableCell>
           <div className="btn-group">
-            <SimpleModalEdit className="btn-edit" dadosOrdem={row} color="primary" />
-            <ConfirmDialog dadosOrdem={row} color="secundary"/>
+            <SimpleModalEdit className="btn-edit" dadosVeiculo={row} color="primary" />
+            <ConfirmDialog dadosVeiculo={row} color="secundary"/>
           </div>
         </TableCell>
       </StyledTableRow>
+      <TableRow>
+        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
+          <Collapse in={open} timeout="auto" unmountOnExit>
+            <Box margin={1}>
+              <Typography variant="h6" gutterBottom component="div">
+                Ordens de Trafego
+              </Typography>
+              <Table size="small" aria-label="purchases">
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Data</TableCell>
+                    <TableCell>Origem</TableCell>
+                    <TableCell align="right">Destino</TableCell>
+                    <TableCell align="right">Condutor</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {row.history.map((historyRow) => (
+                    <TableRow key={historyRow.date}>
+                      <TableCell component="th" scope="row">
+                        {historyRow.date}
+                      </TableCell>
+                      <TableCell>{historyRow.customerId}</TableCell>
+                      <TableCell align="right">{historyRow.amount}</TableCell>
+                      <TableCell align="right">
+                        {Math.round(historyRow.amount * row.price * 100) / 100}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </Box>
+          </Collapse>
+        </TableCell>
+      </TableRow>
     </React.Fragment>
   );
 }
@@ -119,13 +154,12 @@ export default class CollapsibleTable extends Component {
 
   constructor(props){
     super(props);
-    this.ordens = '';
+    this.veiculos = '';
     this.typeFilter = '' ;
     this.textFilter ='' ;
 
     this.state = {
-      rows : [],
-      loading : true
+      rows : []
     }
 
     this.handleSearch = this.handleSearch.bind(this);
@@ -138,45 +172,40 @@ export default class CollapsibleTable extends Component {
   }
 
   async handleSearch() {
-    let url = (this.textFilter == '') ? "ordem/" : "ordem/"+this.typeFilter+"/"+this.textFilter ;
+    let url = (this.textFilter == '') ? "veiculo/" : "veiculo/"+this.typeFilter+"/"+this.textFilter ;
     const response = await api.get(url)
                     .then((response) => {return (response.data)})
                     .catch((err)=> {
                     console.error("ops! ocorreu um erro" + err)});
-    this.ordens = response ;
+    this.veiculos = response ;
     let dadosRow = [];
-    dadosRow.push(this.ordens
-.map(ordens => (
-        createData(ordens.id, ordens.origem, ordens.destino, ordens.data, 
-            ordens.distancia, ordens.veiculo, ordens.condutor)
+    dadosRow.push(this.veiculos.map(veiculo => (
+        createData(veiculo.id, veiculo.modelo, veiculo.marca, veiculo.quilometragem, 
+            veiculo.estadoConservacao, veiculo.placa, 3.99)
     )))
     console.log(this.props.rows);
 
     this.setState({
-      rows: dadosRow[0],
-      loading: false
+      rows: dadosRow[0]
     })
     
   }
 
   async componentDidMount(){
-    const response = await api.get("ordem")
+    const response = await api.get("veiculo")
       .then((response) => {return (response.data)})
       .catch((err)=> {
         console.error("ops! ocorreu um erro" + err)});
 
-    this.ordens = response.data ;
-    console.log(this.ordens);
+    this.veiculos = response ;
     let dadosRow = [];
-    dadosRow.push(this.ordens
-    .map(ordens => (
-            createData(ordens.id, ordens.origem, ordens.destino, ordens.data, 
-                ordens.distancia, ordens.veiculo.modelo, ordens.condutor.nome, ordens.veiculo.id, ordens.condutor.id)
-        )))
+    dadosRow.push(this.veiculos.map(veiculo => (
+        createData(veiculo.id, veiculo.modelo, veiculo.marca, veiculo.quilometragem, 
+            veiculo.estadoConservacao, veiculo.placa, 3.99)
+    )))
 
     this.setState({
-      rows: dadosRow[0],
-      loading: false
+      rows: dadosRow[0]
     })
 
   }
@@ -199,28 +228,19 @@ export default class CollapsibleTable extends Component {
         <Table aria-label="collapsible table">
           <TableHead>
             <TableRow>
-              <StyledTableCell>Origem</StyledTableCell>
-              <StyledTableCell align="right">Destino</StyledTableCell>
-              <StyledTableCell align="right">Data</StyledTableCell>
-              <StyledTableCell align="right">Distancia</StyledTableCell>
-              <StyledTableCell align="right">Veiculo</StyledTableCell>
-              <StyledTableCell align="right">Condutor</StyledTableCell>
+              <StyledTableCell />
+              <StyledTableCell>Modelo</StyledTableCell>
+              <StyledTableCell align="right">Marca</StyledTableCell>
+              <StyledTableCell align="right">Quilometragem</StyledTableCell>
+              <StyledTableCell align="right">Estado</StyledTableCell>
+              <StyledTableCell align="right">Placa</StyledTableCell>
               <StyledTableCell align="right"></StyledTableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            { this.state.loading ? (
-              <div className="loading">
-                <Skeleton animation="wave" width={"200vh"} height={60}/>
-                <Skeleton animation="wave" width={"200vh"} height={60} />
-                <Skeleton animation="wave" width={"200vh"} height={60}/>
-              </div>
-            ) : (
-              this.state.rows.map((row) => (
-                <Row key={row.modelo} row={row} />
-              ))
-            )}
-            
+            {this.state.rows.map((row) => (
+              <Row key={row.modelo} row={row} />
+            ))}
           </TableBody>
         </Table>
       </TableContainer>

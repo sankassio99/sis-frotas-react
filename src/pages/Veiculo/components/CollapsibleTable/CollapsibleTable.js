@@ -34,7 +34,7 @@ const useRowStyles = makeStyles({
 
 const StyledTableCell = withStyles((theme) => ({
   head: {
-    backgroundColor: "#f50057",
+    backgroundColor: "#272c34",
     color: theme.palette.common.white,
   },
   body: {

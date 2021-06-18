@@ -36,7 +36,7 @@ const useRowStyles = makeStyles({
 
 const StyledTableCell = withStyles((theme) => ({
   head: {
-    backgroundColor: "#f50057",
+    backgroundColor: "#272c34",
     color: theme.palette.common.white,
   },
   body: {
@@ -145,12 +145,11 @@ export default class CollapsibleTable extends Component {
                     console.error("ops! ocorreu um erro" + err)});
     this.ordens = response ;
     let dadosRow = [];
-    dadosRow.push(this.ordens
-.map(ordens => (
+    dadosRow.push(this.ordens.map(ordens => (
         createData(ordens.id, ordens.origem, ordens.destino, ordens.data, 
-            ordens.distancia, ordens.veiculo, ordens.condutor)
+            ordens.distancia, ordens.veiculo.modelo, ordens.condutor.nome)
     )))
-    console.log(this.props.rows);
+    console.log(dadosRow[0]);
 
     this.setState({
       rows: dadosRow[0],
@@ -196,7 +195,7 @@ export default class CollapsibleTable extends Component {
           </div>
           <SimpleModal />
         </div>
-        <Table aria-label="collapsible table">
+        <Table className="table" aria-label="collapsible table">
           <TableHead>
             <TableRow>
               <StyledTableCell>Origem</StyledTableCell>
@@ -211,9 +210,9 @@ export default class CollapsibleTable extends Component {
           <TableBody>
             { this.state.loading ? (
               <div className="loading">
-                <Skeleton animation="wave" width={"200vh"} height={60}/>
-                <Skeleton animation="wave" width={"200vh"} height={60} />
-                <Skeleton animation="wave" width={"200vh"} height={60}/>
+                <Skeleton animation="wave" width={"180vh"} height={60}/>
+                <Skeleton animation="wave" width={"180vh"} height={60} />
+                <Skeleton animation="wave" width={"180vh"} height={60}/>
               </div>
             ) : (
               this.state.rows.map((row) => (

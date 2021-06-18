@@ -8,7 +8,7 @@ import "./estilo.css";
 
 export default function SimpleMenu(props) {
   const [anchorEl, setAnchorEl] = React.useState(null);
-  const [textLabel, setTextLabel] = React.useState('Veiculo');
+  const [textLabel, setTextLabel] = React.useState('origem');
   const [textInput, setTextInput] = React.useState('');
   props.callbackParent(textInput, textLabel);
 
@@ -44,10 +44,11 @@ export default function SimpleMenu(props) {
         open={Boolean(anchorEl)}
         onClose={handleClose}
       >
-        <MenuItem onClick={() => handleGetValue("estado")} >Estado de Conservacao</MenuItem>
-        <MenuItem onClick={() => handleGetValue("marca")}>Marca</MenuItem>
-        <MenuItem onClick={() => handleGetValue("intervaloQuilometragem")}>Quilometragem</MenuItem>
-        <MenuItem onClick={() => handleGetValue("modelo")}>Modelo</MenuItem>
+        <MenuItem onClick={() => handleGetValue("veiculo")} >Veiculo</MenuItem>
+        <MenuItem onClick={() => handleGetValue("condutor")}>Condutor</MenuItem>
+        <MenuItem onClick={() => handleGetValue("data")}>Data</MenuItem>
+        <MenuItem onClick={() => handleGetValue("origem")}>Origem</MenuItem>
+        <MenuItem onClick={() => handleGetValue("destino")}>Destino</MenuItem>
       </Menu>
     </div>
   );

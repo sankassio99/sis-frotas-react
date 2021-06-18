@@ -2,6 +2,10 @@
     width: 80%;
 }
 
+.table {
+    overflow: hidden;
+}
+
 .btn-group {
     display:flex;
     align-items: center ;

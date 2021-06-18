@@ -36,7 +36,7 @@ const useRowStyles = makeStyles({
 
 const StyledTableCell = withStyles((theme) => ({
   head: {
-    backgroundColor: "#f50057",
+    backgroundColor: "#272c34",
     color: theme.palette.common.white,
   },
   body: {
@@ -180,12 +180,11 @@ export default class CollapsibleTable extends Component {
                     console.error("ops! ocorreu um erro" + err)});
     this.condutores = response ;
     let dadosRow = [];
-    dadosRow.push(this.condutores
-.map(condutores => (
-        createData(condutores.id, condutores.origem, condutores.destino, condutores.data, 
-            condutores.distancia, condutores.veiculo, condutores.condutor)
+    dadosRow.push(this.condutores.map(condutores => (
+        createData(condutores.id, condutores.nome, condutores.numero, condutores.categoria, 
+          condutores.dataNacimento, condutores.cpf, condutores.rg)
     )))
-    console.log(this.props.rows);
+    console.log(dadosRow[0]);
 
     this.setState({
       rows: dadosRow[0],
@@ -215,6 +214,12 @@ export default class CollapsibleTable extends Component {
 
   }
 
+  handleClean(){
+    setTimeout(()=>{
+      window.location.reload();
+    },0);
+  }
+
   
   render(){
     return (
@@ -226,6 +231,9 @@ export default class CollapsibleTable extends Component {
             <Button variant="contained" color="primary" onClick={this.handleSearch}>
               <SearchSharpIcon/>
               Buscar
+            </Button>
+            <Button variant="contained" color="secundary" onClick={this.handleClean}>
+              Limpar
             </Button>
           </div>
           <SimpleModal />

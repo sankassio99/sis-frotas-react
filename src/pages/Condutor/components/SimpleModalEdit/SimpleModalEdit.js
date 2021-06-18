@@ -99,7 +99,7 @@ export default class FormDialog extends React.Component {
       <div>
         <Snackbar open={this.state.openAlert} autoHideDuration={6000} onClose={handleClose}>
           <Alert onClose={handleClose} severity="success">
-            Novo Condutor Adicionada com Sucesso!
+            Condutor Editado com Sucesso!
           </Alert>
         </Snackbar>
          <Button color="primary">

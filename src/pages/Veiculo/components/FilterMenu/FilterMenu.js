@@ -8,7 +8,7 @@ import "./estilo.css";
 
 export default function SimpleMenu(props) {
   const [anchorEl, setAnchorEl] = React.useState(null);
-  const [textLabel, setTextLabel] = React.useState('Veiculo');
+  const [textLabel, setTextLabel] = React.useState('modelo');
   const [textInput, setTextInput] = React.useState('');
   props.callbackParent(textInput, textLabel);
 
